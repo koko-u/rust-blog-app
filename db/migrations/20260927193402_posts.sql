@@ -10,12 +10,13 @@ CREATE TABLE "posts"
     "created_at"  TIMESTAMPTZ  NOT NULL DEFAULT now(),
     "updated_at"  TIMESTAMPTZ  NOT NULL DEFAULT now(),
     CONSTRAINT "posts_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "post_category_fkey" FOREIGN KEY ("category_id") REFERENCES "categories" ("id") ON DELETE CASCADE,
+    CONSTRAINT "post_id_user_id_unique" UNIQUE ("user_id", "id"),
+    CONSTRAINT "post_category_fkey" FOREIGN KEY ("user_id", "category_id") REFERENCES "categories" ("user_id", "id") ON DELETE CASCADE,
     CONSTRAINT "post_slug_unique" UNIQUE ("slug")
 );
 
 CREATE INDEX "post_user_idx" ON "posts" ("user_id");
-CREATE INDEX "post_category_id" ON "posts" ("category_id");
+CREATE INDEX "post_category_id" ON "posts" ("user_id", "category_id");
 
 CREATE TRIGGER "post_update_at_tgr"
     BEFORE UPDATE

@@ -1,0 +1,11 @@
+use axum::routing;
+
+use crate::features::categories::handlers;
+use crate::state;
+
+pub fn router() -> axum::Router<state::AppState> {
+    axum::Router::new().route(
+        "/categories",
+        routing::MethodRouter::new().get(handlers::get_categories),
+    )
+}

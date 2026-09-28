@@ -2,6 +2,7 @@ use axum::routing;
 use axum_keycloak_auth::layer;
 use axum_keycloak_auth::role;
 
+use crate::features::categories;
 use crate::features::health_check;
 use crate::features::product_brands;
 use crate::state;
@@ -11,10 +12,11 @@ where
     R: role::Role + 'static,
 {
     let protected_routes = axum::Router::new()
-        .merge(product_brands::router());
+        .merge(product_brands::router())
+        .merge(categories::router());
     // let protected_routes = protected_routes.layer(auth_layer);
 
     axum::Router::new()
         .route("/health-check", routing::get(health_check::ok))
-        .nest("/api", protected_routes)        
+        .nest("/api", protected_routes)
 }

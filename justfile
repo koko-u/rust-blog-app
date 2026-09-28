@@ -20,17 +20,26 @@ ui-dev:
 [parallel]
 dev: api-dev ui-dev
 
-
 # docker up
 dup:
     @docker compose -f {{ workspace_root }}/docker/compose.yml up -d
-
-
 
 # docker down
 dwn:
     @docker compose -f {{ workspace_root }}/docker/compose.yml down
 
+# dbmate rollback all
+rollback-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    count=$(dbmate status | awk '/^Applied:/ { print $2 }')
+
+    echo "Rolling back $count migration(s)..."
+
+    for ((i = 0; i < count; i++)); do
+        dbmate rollback
+    done
 
 # format rust code
 api-fmt:

@@ -1,3 +1,4 @@
+use crate::features::categories::openapi::CategoriesApi;
 use crate::features::health_check::*;
 use crate::features::product_brands::openapi::BrandsApi;
 
@@ -11,7 +12,8 @@ const MODIFIER: security_addon::SecurityAddon = security_addon::SecurityAddon;
     ok
     ),
     nest(
-        (path = "/api/brands", api = BrandsApi)
+        (path = "/api/brands", api = BrandsApi),
+        (path = "/api/categories", api = CategoriesApi)
     ),
     modifiers(
        &MODIFIER
