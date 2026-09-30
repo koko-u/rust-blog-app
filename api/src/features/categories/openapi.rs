@@ -1,4 +1,4 @@
 use crate::features::categories::handlers::*;
 #[derive(utoipa::OpenApi)]
-#[openapi(paths(get_categories))]
+#[openapi(paths(get_categories, create_category))]
 pub struct CategoriesApi;

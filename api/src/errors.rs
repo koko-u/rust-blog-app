@@ -3,7 +3,7 @@ use axum::response;
 
 use crate::shared::responses;
 
-#[derive(Debug, derive_more::Display, derive_more::Error, derive_more::From)]
+#[derive(Debug, derive_more::Display, derive_more::Error)]
 pub enum ApiError {
     #[display("Database error: {}", _0)]
     Database(#[error(source)] sqlx::Error),
@@ -13,6 +13,19 @@ pub enum ApiError {
     NotFound { message: String },
     #[display("Unauthorized error")]
     Unauthorized,
+    #[display("Other error: {}", message)]
+    Other { message: String },
+}
+
+impl From<sqlx::Error> for ApiError {
+    fn from(error: sqlx::Error) -> Self {
+        Self::Database(error)
+    }
+}
+impl From<garde::Report> for ApiError {
+    fn from(error: garde::Report) -> Self {
+        Self::Validation(error)
+    }
 }
 
 #[derive(Debug, derive_more::Display, derive_more::Error, derive_more::From)]
@@ -53,6 +66,15 @@ impl response::IntoResponse for ApiError {
                 let problem_details =
                     responses::ProblemDetails::simple("Unauthorized", http::StatusCode::UNAUTHORIZED);
                 (http::StatusCode::UNAUTHORIZED, axum::Json(problem_details)).into_response()
+            }
+            Self::Other { message } => {
+                tracing::info!("Other error: {message}");
+
+                (
+                    http::StatusCode::INTERNAL_SERVER_ERROR,
+                    axum::Json(self.to_string()),
+                )
+                    .into_response()
             }
         }
     }

@@ -6,6 +6,8 @@ use crate::state;
 pub fn router() -> axum::Router<state::AppState> {
     axum::Router::new().route(
         "/categories",
-        routing::MethodRouter::new().get(handlers::get_categories),
+        routing::MethodRouter::new()
+            .get(handlers::get_categories)
+            .post(handlers::create_category),
     )
 }
