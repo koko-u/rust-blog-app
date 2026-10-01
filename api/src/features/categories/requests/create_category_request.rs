@@ -26,11 +26,7 @@ impl CreateCategoryRequest {
             let name = self.name.expect("category name should be required");
             let slug = rslug::slugify!(&name);
 
-            commands::CreateCategoryCommand {
-                user_id: user_id.into_inner(),
-                name,
-                slug,
-            }
+            commands::CreateCategoryCommand { user_id, name, slug }
         })
     }
 }
