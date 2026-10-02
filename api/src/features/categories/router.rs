@@ -13,6 +13,8 @@ pub fn router() -> axum::Router<state::AppState> {
         )
         .route(
             "/categories/{id}",
-            routing::MethodRouter::new().put(handlers::update_category),
+            routing::MethodRouter::new()
+                .get(handlers::get_category)
+                .put(handlers::update_category),
         )
 }
