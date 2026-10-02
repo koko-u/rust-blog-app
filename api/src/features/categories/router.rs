@@ -15,6 +15,7 @@ pub fn router() -> axum::Router<state::AppState> {
             "/categories/{id}",
             routing::MethodRouter::new()
                 .get(handlers::get_category)
-                .put(handlers::update_category),
+                .put(handlers::update_category)
+                .delete(handlers::delete_category),
         )
 }
