@@ -34,6 +34,8 @@ pub enum ValidationError {
     Database(#[error(source)] sqlx::Error),
     #[display("Validation error: {}", _0)]
     Validation(#[error(source)] garde::Report),
+    #[display("Not found: {}", message)]
+    NoResource { message: String },
 }
 
 impl response::IntoResponse for ApiError {
@@ -85,6 +87,7 @@ impl From<ValidationError> for ApiError {
         match err {
             ValidationError::Database(err) => Self::Database(err),
             ValidationError::Validation(err) => Self::Validation(err),
+            ValidationError::NoResource { message } => Self::NotFound { message },
         }
     }
 }

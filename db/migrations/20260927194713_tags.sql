@@ -7,7 +7,7 @@ CREATE TABLE "tags"
     "created_at" TIMESTAMPTZ  NOT NULL DEFAULT now(),
     "updated_at" TIMESTAMPTZ  NOT NULL DEFAULT now(),
     CONSTRAINT "tags_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "tag_name_unique" UNIQUE ("name"),
+    CONSTRAINT "tag_user_id_name_unique" UNIQUE ("user_id", "name"),
     CONSTRAINT "tag_id_user_id_unique" UNIQUE ("user_id", "id")
 );
 

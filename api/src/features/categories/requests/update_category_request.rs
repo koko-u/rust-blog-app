@@ -27,13 +27,11 @@ impl UpdateCategoryRequest {
 
         // check exists id and user_id
         let exists = repositories::exists_by_key(pool, id, user_id).await?;
-        let key_result = exists.ok_or_else(|| {
-            let error = garde::Error::new("There is no category corresponding to id and user_id.");
-            let mut report = garde::Report::new();
-            report.append(garde::Path::new("id"), error.clone());
-            report.append(garde::Path::new("user_id"), error.clone());
-            report
-        });
+        if !exists {
+            return Err(errors::ValidationError::NoResource {
+                message: "There is no category corresponding to id and user_id".to_string(),
+            });
+        }
 
         // slug should not be duplicate
         let mut slug_result = Ok(());
@@ -52,15 +50,15 @@ impl UpdateCategoryRequest {
             }
         }
 
-        match (garde_result, key_result, slug_result) {
-            (Ok(()), Ok(()), Ok(())) => Ok(commands::UpdateCategoryCommand {
+        match (garde_result, slug_result) {
+            (Ok(()), Ok(())) => Ok(commands::UpdateCategoryCommand {
                 id,
                 user_id,
                 name: self.name.expect("category name should be required"),
                 slug: self.slug.expect("slug should be required"),
             }),
-            (r1, r2, r3) => {
-                let report = merge!(r1, r2, r3);
+            (r1, r2) => {
+                let report = merge!(r1, r2);
                 Err(errors::ValidationError::Validation(report))
             }
         }

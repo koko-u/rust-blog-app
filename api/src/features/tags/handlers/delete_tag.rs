@@ -2,8 +2,8 @@ use axum::extract;
 use axum::http;
 
 use crate::errors;
-use crate::features::categories::models;
-use crate::features::categories::repositories;
+use crate::features::tags::models;
+use crate::features::tags::repositories;
 use crate::shared;
 use crate::state;
 
@@ -11,27 +11,27 @@ use crate::state;
     delete,
     path = "/{id}",
     params(
-        ("id" = models::CategoryId, Path, description = "Category Id")
+        ("id" = models::TagId, Path, description = "Tag Id")
     ),
-    description = "Delete Category by Id",
-    tag = "Categories",
+    description = "Delete Tag by Id",
+    tag = "Tags",
     responses(
         (status = 204, description = "No Content"),
         (status = 404, description = "the Product not found", body = shared::responses::ProblemDetails),
         (status = 500, description = "Internal server error", body = shared::responses::ProblemDetails),
     )
 )]
-pub async fn delete_category(
-    extract::Path(id): extract::Path<models::CategoryId>,
+pub async fn delete_tag(
+    extract::Path(id): extract::Path<models::TagId>,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<http::StatusCode, errors::ApiError> {
-    let deleted_brand = shared::transaction(&state.pool, async |tx| {
+    let deleted = shared::transaction(&state.pool, async |tx| {
         let row = repositories::delete_by_id(tx, id).await?;
 
         match row {
-            Some(row) => Ok(models::CategoryModel::from(row)),
+            Some(row) => Ok(models::TagModel::from(row)),
             None => Err(errors::ApiError::NotFound {
-                message: format!("Category with Id={id} not found"),
+                message: format!("Tag with Id={id} not found"),
             }),
         }
     })
