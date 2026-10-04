@@ -25,7 +25,8 @@ pub async fn get_post(
     extract::Path(id): extract::Path<models::PostId>,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<axum::Json<responses::PostResponse>, errors::ApiError> {
-    let posts = repositories::select_by_id(&state.pool, id).await?;
+    let mut conn = state.pool.acquire().await?;
+    let posts = repositories::select_by_id(conn.as_mut(), id).await?;
     let posts: Vec<_> = posts.into();
 
     match posts.into_iter().next() {

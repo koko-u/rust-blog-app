@@ -33,14 +33,14 @@ pub async fn create_post(
     let created: models::PostModel =
         shared::transaction::<models::PostModel, errors::ApiError, _>(&state.pool, async |tx| {
             // create post
-            let mut post = services::tx_create_post(tx, &command).await?;
+            let post = services::tx_create_post(tx, &command).await?;
 
             // associate post and tags
             pt_repositories::insert_many_tag_ids(tx, user_id, post.id, command.tag_ids)
                 .await
                 .map_err(errors::ApiError::from)?;
 
-            let posts = repositories::select_by_id(&state.pool, post.id).await?;
+            let posts = repositories::select_by_id(tx.conn(), post.id).await?;
             let mut posts: Vec<_> = posts.into();
 
             Ok(posts.pop().expect("should get created post"))

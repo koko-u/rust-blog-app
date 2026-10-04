@@ -42,7 +42,7 @@ pub async fn update_post(
         pt_repositories::insert_many_tag_ids(tx, command.user_id, command.id, command.tag_ids).await?;
 
         // get updated post
-        let posts = repositories::select_by_id(&state.pool, command.id).await?;
+        let posts = repositories::select_by_id(tx.conn(), command.id).await?;
         Ok(posts.into())
     })
     .await?;
