@@ -1,19 +1,23 @@
 mod delete_by_id;
 mod exists_by_id_user_id;
+mod exists_by_names;
 mod exists_by_user_id_name;
 mod insert_optional;
 mod insert_or_select;
 mod select_all;
 mod select_by_id;
+mod select_by_names;
 mod select_by_user_id_name;
 mod update_optional;
 
 pub use delete_by_id::delete_by_id;
 pub use exists_by_id_user_id::exists_by_id_user_id;
+pub use exists_by_names::exists_by_names;
 pub use exists_by_user_id_name::exists_by_user_id_name;
 pub use insert_optional::insert_optional;
 pub use insert_or_select::insert_or_select;
 pub use select_all::select_all;
 pub use select_by_id::select_by_id;
+pub use select_by_names::select_by_names;
 pub use select_by_user_id_name::select_by_user_id_name;
 pub use update_optional::update_optional;

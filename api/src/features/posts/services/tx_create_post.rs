@@ -11,10 +11,10 @@ use crate::shared;
 pub async fn tx_create_post(
     tx: &mut shared::Tx<'_>,
     command: &commands::CreatePostCommand,
-    category_id: c_models::CategoryId,
 ) -> Result<models::PostModel, errors::ApiError> {
     let commands::CreatePostCommand {
         user_id,
+        category_id,
         title,
         content,
         ..
@@ -33,7 +33,7 @@ pub async fn tx_create_post(
             });
         }
         let row =
-            repositories::insert_optional(tx, *user_id, category_id, title, &slug, content.as_ref()).await?;
+            repositories::insert_optional(tx, *user_id, *category_id, title, &slug, content.as_ref()).await?;
         if let Some(row) = row {
             break models::PostModel::from(row);
         }
