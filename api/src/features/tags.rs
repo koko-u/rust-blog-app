@@ -5,7 +5,7 @@ pub mod repositories;
 
 mod commands;
 mod requests;
-mod responses;
+pub mod responses;
 mod router;
 mod rows;
 

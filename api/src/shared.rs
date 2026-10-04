@@ -4,6 +4,7 @@ pub mod models;
 pub mod params;
 pub mod responses;
 mod tx;
+pub mod validators;
 
 pub use max_connections::MaxConnections;
 pub use tx::Tx;

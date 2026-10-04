@@ -9,11 +9,13 @@ pub enum ApiError {
     Database(#[error(source)] sqlx::Error),
     #[display("Validation error: {}", _0)]
     Validation(#[error(source)] garde::Report),
-    #[display("Not found: {}", message)]
+    #[display("Not found: {message}")]
     NotFound { message: String },
     #[display("Unauthorized error")]
     Unauthorized,
-    #[display("Other error: {}", message)]
+    #[display("Failed to create Slug: {message} (max = {max_count})")]
+    Slug { message: String, max_count: u32 },
+    #[display("Other error: {message}")]
     Other { message: String },
 }
 
@@ -68,6 +70,15 @@ impl response::IntoResponse for ApiError {
                 let problem_details =
                     responses::ProblemDetails::simple("Unauthorized", http::StatusCode::UNAUTHORIZED);
                 (http::StatusCode::UNAUTHORIZED, axum::Json(problem_details)).into_response()
+            }
+            Self::Slug { message, max_count } => {
+                tracing::info!("Failed to create slug: {message} (max={max_count})");
+
+                (
+                    http::StatusCode::INTERNAL_SERVER_ERROR,
+                    axum::Json(self.to_string()),
+                )
+                    .into_response()
             }
             Self::Other { message } => {
                 tracing::info!("Other error: {message}");

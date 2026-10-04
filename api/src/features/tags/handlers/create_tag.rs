@@ -1,6 +1,7 @@
 use axum::extract;
 
 use crate::errors;
+use crate::features::tags::commands;
 use crate::features::tags::models;
 use crate::features::tags::repositories;
 use crate::features::tags::requests;
@@ -26,10 +27,10 @@ pub async fn create_tag(
     // TODO get user_id from authentication
     let user_id = uuid::uuid!("c85df66a-ccd7-4f23-9df6-6accd7ff23db").into();
     // request validation ( validation errors goto errors::ApiError::Validation(...)
-    let command = request.validate_into(user_id, &state.pool).await?;
+    let commands::CreateTagCommand { user_id, name } = request.validate_into(user_id, &state.pool).await?;
 
     let created: models::TagModel = shared::transaction(&state.pool, async |tx| {
-        let row = repositories::insert_optional(tx, &command).await?;
+        let row = repositories::insert_optional(tx, user_id, &name).await?;
         match row {
             Some(row) => Ok(models::TagModel::from(row)),
             None => Err(errors::ApiError::Other {

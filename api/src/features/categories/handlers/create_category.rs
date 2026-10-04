@@ -1,11 +1,9 @@
 use axum::extract;
 
 use crate::errors;
-use crate::features::categories::commands;
-use crate::features::categories::models;
-use crate::features::categories::repositories;
 use crate::features::categories::requests;
 use crate::features::categories::responses;
+use crate::features::categories::services;
 use crate::shared;
 use crate::state;
 
@@ -27,30 +25,10 @@ pub async fn create_category(
     // TODO get user_id from authentication
     let user_id = uuid::uuid!("c85df66a-ccd7-4f23-9df6-6accd7ff23db").into();
     // request validation ( validation errors goto errors::ApiError::Validation(...)
-    let mut command = request.validate_into(user_id, &state.pool).await?;
+    let command = request.validate_into(user_id, &state.pool).await?;
 
-    let created: models::CategoryModel = shared::transaction(&state.pool, async |tx| {
-        // try to create category
-        let base_slug = command.slug.clone();
-        let mut i = 1;
-        let created_row = loop {
-            if i >= 100 {
-                return Err(errors::ApiError::Other {
-                    message: "The number of attempts to generate the slug has been exceeded.".to_string(),
-                });
-            }
-            let row = repositories::insert_optional(tx, &command).await?;
-            if let Some(row) = row {
-                break models::CategoryModel::from(row);
-            }
-
-            let slug = format!("{base_slug}-{i}");
-            command = commands::CreateCategoryCommand { slug, ..command };
-
-            i += 1;
-        };
-
-        Ok(created_row)
+    let created = shared::transaction(&state.pool, async |tx| {
+        services::tx_create_category(&command, tx).await
     })
     .await?;
 

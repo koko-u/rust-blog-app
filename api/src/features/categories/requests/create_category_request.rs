@@ -24,9 +24,8 @@ impl CreateCategoryRequest {
 
         garde_result.map(|_| {
             let name = self.name.expect("category name should be required");
-            let slug = rslug::slugify!(&name);
 
-            commands::CreateCategoryCommand { user_id, name, slug }
+            commands::CreateCategoryCommand { user_id, name }
         })
     }
 }

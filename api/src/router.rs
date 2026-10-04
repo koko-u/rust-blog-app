@@ -4,6 +4,7 @@ use axum_keycloak_auth::role;
 
 use crate::features::categories;
 use crate::features::health_check;
+use crate::features::posts;
 use crate::features::tags;
 use crate::state;
 
@@ -13,7 +14,8 @@ where
 {
     let protected_routes = axum::Router::new()
         .merge(categories::router())
-        .merge(tags::router());
+        .merge(tags::router())
+        .merge(posts::router());
     // let protected_routes = protected_routes.layer(auth_layer);
 
     axum::Router::new()

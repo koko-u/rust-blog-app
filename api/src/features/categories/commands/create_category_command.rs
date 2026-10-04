@@ -4,5 +4,4 @@ use crate::shared;
 pub struct CreateCategoryCommand {
     pub user_id: shared::models::UserId,
     pub name: String,
-    pub slug: String,
 }

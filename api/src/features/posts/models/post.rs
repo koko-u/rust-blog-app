@@ -1,6 +1,8 @@
 use better_default::Default as BetterDefault;
 use into_inner::IntoInner;
 
+use crate::features::categories::models as c_models;
+use crate::features::tags::models as t_models;
 use crate::shared;
 
 #[derive(
@@ -22,12 +24,15 @@ use crate::shared;
 #[display("{}", _0)]
 #[serde(transparent)]
 #[schema(value_type = uuid::Uuid)]
-pub struct CategoryId(#[default(uuid::Uuid::now_v7())] uuid::Uuid);
+pub struct PostId(#[default(uuid::Uuid::now_v7())] uuid::Uuid);
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
-pub struct CategoryModel {
-    pub id: CategoryId,
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct PostModel {
+    pub id: PostId,
     pub user_id: shared::models::UserId,
-    pub name: String,
+    pub category: c_models::CategoryModel,
+    pub title: String,
     pub slug: String,
+    pub content: Option<String>,
+    pub tags: Vec<t_models::TagModel>,
 }
