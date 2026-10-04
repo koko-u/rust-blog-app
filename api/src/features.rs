@@ -1,4 +1,5 @@
 pub mod categories;
+pub mod comments;
 pub mod health_check;
 pub mod post_tags;
 pub mod posts;

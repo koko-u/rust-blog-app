@@ -1,5 +1,6 @@
 use axum::routing;
 
+use crate::features::comments;
 use crate::features::posts::handlers;
 use crate::state;
 
@@ -18,4 +19,5 @@ pub fn router() -> axum::Router<state::AppState> {
                 .put(handlers::update_post)
                 .delete(handlers::delete_post),
         )
+        .nest("/posts/{post_id}", comments::router())
 }
