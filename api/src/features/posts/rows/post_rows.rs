@@ -1,4 +1,3 @@
-use super::PostRow;
 use super::post_row;
 use crate::features::categories::models as c_models;
 use crate::features::posts::models;
@@ -54,8 +53,8 @@ struct Key {
     slug: String,
     content: Option<String>,
 }
-impl From<PostRow> for Key {
-    fn from(row: PostRow) -> Self {
+impl From<post_row::PostRow> for Key {
+    fn from(row: post_row::PostRow) -> Self {
         Self {
             id: row.id,
             user_id: row.user_id,

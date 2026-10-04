@@ -1,6 +1,7 @@
 use axum::extract;
 
 use crate::errors;
+use crate::features::posts::repositories;
 use crate::features::posts::responses;
 use crate::shared;
 use crate::state;
@@ -18,5 +19,9 @@ use crate::state;
 pub async fn get_posts(
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<axum::Json<Vec<responses::PostResponse>>, errors::ApiError> {
-    todo!()
+    let posts = repositories::select_all(&state.pool).await?;
+    let posts: Vec<_> = posts.into();
+    let response = posts.into_iter().map(responses::PostResponse::from).collect();
+
+    Ok(axum::Json(response))
 }
