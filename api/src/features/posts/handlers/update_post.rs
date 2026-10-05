@@ -6,6 +6,7 @@ use crate::features::posts::models;
 use crate::features::posts::repositories;
 use crate::features::posts::requests;
 use crate::features::posts::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -24,14 +25,13 @@ use crate::state;
     )
 )]
 pub async fn update_post(
+    current_user: u_models::CurrentUser,
     extract::Path(id): extract::Path<models::PostId>,
     extract::State(state): extract::State<state::AppState>,
     extract::Json(request): extract::Json<requests::UpdatePostRequest>,
 ) -> Result<axum::Json<responses::PostResponse>, errors::ApiError> {
-    // TODO get user_id from authentication
-    let user_id = uuid::uuid!("01a106a7-4327-7287-9940-af4254498604").into();
     // validate request
-    let command = request.validate_into(id, user_id, &state.pool).await?;
+    let command = request.validate_into(id, current_user.id, &state.pool).await?;
 
     let posts = shared::transaction::<Vec<_>, sqlx::Error, _>(&state.pool, async |tx| {
         // update post

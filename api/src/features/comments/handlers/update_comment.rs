@@ -4,6 +4,7 @@ use crate::errors;
 use crate::features::comments::path_params;
 use crate::features::comments::requests;
 use crate::features::comments::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -22,6 +23,7 @@ use crate::state;
     )
 )]
 pub async fn update_comment(
+    current_user: u_models::CurrentUser,
     extract::Path(params): extract::Path<path_params::PostCommentParam>,
     extract::State(state): extract::State<state::AppState>,
     extract::Json(request): extract::Json<requests::UpdateCommentRequest>,

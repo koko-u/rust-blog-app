@@ -4,6 +4,7 @@ use crate::errors;
 use crate::features::categories::requests;
 use crate::features::categories::responses;
 use crate::features::categories::services;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -19,13 +20,12 @@ use crate::state;
     )
 )]
 pub async fn create_category(
+    current_user: u_models::CurrentUser,
     extract::State(state): extract::State<state::AppState>,
     extract::Json(request): extract::Json<requests::CreateCategoryRequest>,
 ) -> Result<shared::responses::Created<responses::CategoryResponse>, errors::ApiError> {
-    // TODO get user_id from authentication
-    let user_id = uuid::uuid!("01a106a7-4327-7287-9940-af4254498604").into();
     // request validation ( validation errors goto errors::ApiError::Validation(...)
-    let command = request.validate_into(user_id, &state.pool).await?;
+    let command = request.validate_into(current_user.id, &state.pool).await?;
 
     let created = shared::transaction(&state.pool, async |tx| {
         services::tx_create_category(&command, tx).await

@@ -4,6 +4,7 @@ use axum::http;
 use crate::errors;
 use crate::features::posts::models;
 use crate::features::posts::repositories;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -22,11 +23,12 @@ use crate::state;
     )
 )]
 pub async fn delete_post(
+    current_user: u_models::CurrentUser,
     extract::Path(id): extract::Path<models::PostId>,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<http::StatusCode, errors::ApiError> {
     shared::transaction(&state.pool, async |tx| {
-        let affected_rows = repositories::delete_by_id(tx, id).await?;
+        let affected_rows = repositories::delete_by_id_user_id(tx, id, current_user.id).await?;
         (affected_rows > 0).ok_or_else(|| errors::ApiError::NotFound {
             message: format!("Post with Id={id} not found"),
         })

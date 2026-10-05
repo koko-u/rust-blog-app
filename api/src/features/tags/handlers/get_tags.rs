@@ -4,6 +4,7 @@ use crate::errors;
 use crate::features::tags::models;
 use crate::features::tags::repositories;
 use crate::features::tags::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -18,9 +19,10 @@ use crate::state;
     )
 )]
 pub async fn get_tags(
+    current_user: u_models::CurrentUser,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<axum::Json<Vec<responses::TagResponse>>, errors::ApiError> {
-    let tags = repositories::select_all(&state.pool).await?;
+    let tags = repositories::select_by_user_id(&state.pool, current_user.id).await?;
 
     let response = tags
         .into_iter()

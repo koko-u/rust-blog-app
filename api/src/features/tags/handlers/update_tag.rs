@@ -5,6 +5,7 @@ use crate::features::tags::models;
 use crate::features::tags::repositories;
 use crate::features::tags::requests;
 use crate::features::tags::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -23,14 +24,13 @@ use crate::state;
     )
 )]
 pub async fn update_tag(
+    current_user: u_models::CurrentUser,
     extract::Path(id): extract::Path<models::TagId>,
     extract::State(state): extract::State<state::AppState>,
     extract::Json(request): extract::Json<requests::UpdateTagRequest>,
 ) -> Result<axum::Json<responses::TagResponse>, errors::ApiError> {
-    // TODO get user_id from authentication
-    let user_id = uuid::uuid!("01a106a7-4327-7287-9940-af4254498604").into();
     // validate request
-    let command = request.validate_into(id, user_id, &state.pool).await?;
+    let command = request.validate_into(id, current_user.id, &state.pool).await?;
 
     let updated = shared::transaction(&state.pool, async |tx| {
         // update category

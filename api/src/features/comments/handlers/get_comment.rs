@@ -3,6 +3,7 @@ use axum::extract;
 use crate::errors;
 use crate::features::comments::path_params;
 use crate::features::comments::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -21,6 +22,7 @@ use crate::state;
     )
 )]
 pub async fn get_comment(
+    current_user: u_models::CurrentUser,
     extract::Path(params): extract::Path<path_params::PostCommentParam>,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<axum::Json<responses::CommentResponse>, errors::ApiError> {

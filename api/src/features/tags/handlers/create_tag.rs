@@ -6,6 +6,7 @@ use crate::features::tags::models;
 use crate::features::tags::repositories;
 use crate::features::tags::requests;
 use crate::features::tags::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -21,13 +22,13 @@ use crate::state;
     )
 )]
 pub async fn create_tag(
+    current_user: u_models::CurrentUser,
     extract::State(state): extract::State<state::AppState>,
     extract::Json(request): extract::Json<requests::CreateTagRequest>,
 ) -> Result<shared::responses::Created<responses::TagResponse>, errors::ApiError> {
-    // TODO get user_id from authentication
-    let user_id = uuid::uuid!("01a106a7-4327-7287-9940-af4254498604").into();
     // request validation ( validation errors goto errors::ApiError::Validation(...)
-    let commands::CreateTagCommand { user_id, name } = request.validate_into(user_id, &state.pool).await?;
+    let commands::CreateTagCommand { user_id, name } =
+        request.validate_into(current_user.id, &state.pool).await?;
 
     let created: models::TagModel = shared::transaction(&state.pool, async |tx| {
         let row = repositories::insert_optional(tx, user_id, &name).await?;

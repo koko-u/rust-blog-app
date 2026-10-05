@@ -4,6 +4,7 @@ use crate::errors;
 use crate::features::posts::models;
 use crate::features::posts::repositories;
 use crate::features::posts::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -22,11 +23,12 @@ use crate::state;
     )
 )]
 pub async fn get_post(
+    current_user: u_models::CurrentUser,
     extract::Path(id): extract::Path<models::PostId>,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<axum::Json<responses::PostResponse>, errors::ApiError> {
     let mut conn = state.pool.acquire().await?;
-    let posts = repositories::select_by_id(conn.as_mut(), id).await?;
+    let posts = repositories::select_by_id_user_id(conn.as_mut(), id, current_user.id).await?;
     let posts: Vec<_> = posts.into();
 
     match posts.into_iter().next() {

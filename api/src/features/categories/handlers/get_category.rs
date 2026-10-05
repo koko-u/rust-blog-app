@@ -4,6 +4,7 @@ use crate::errors;
 use crate::features::categories::models;
 use crate::features::categories::repositories;
 use crate::features::categories::responses;
+use crate::features::users::models as u_models;
 use crate::shared;
 use crate::state;
 
@@ -22,10 +23,11 @@ use crate::state;
     )
 )]
 pub async fn get_category(
+    current_user: u_models::CurrentUser,
     extract::Path(id): extract::Path<models::CategoryId>,
     extract::State(state): extract::State<state::AppState>,
 ) -> Result<axum::Json<responses::CategoryResponse>, errors::ApiError> {
-    let category = repositories::select_by_id(&state.pool, id).await?;
+    let category = repositories::select_by_id_user_id(&state.pool, id, current_user.id).await?;
 
     match category {
         Some(category) => {

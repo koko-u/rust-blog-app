@@ -1,2 +1,5 @@
+mod current_user;
 mod users;
-pub use users::UserId;
+
+pub use current_user::CurrentUser;pub use users::UserId;
+
