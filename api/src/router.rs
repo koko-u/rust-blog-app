@@ -16,7 +16,7 @@ where
         .merge(categories::router())
         .merge(tags::router())
         .merge(posts::router());
-    // let protected_routes = protected_routes.layer(auth_layer);
+    let protected_routes = protected_routes.layer(auth_layer);
 
     axum::Router::new()
         .route("/health-check", routing::get(health_check::ok))

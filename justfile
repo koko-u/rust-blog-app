@@ -57,3 +57,15 @@ fmt: api-fmt ui-fmt
 # seed sample data
 seeds key:
     @cargo run --package seeds --bin "{{ key }}"
+
+# get keycloak test jwt token
+get-token username password:
+    @curl --silent --fail-with-body \
+        -X POST \
+        'http://localhost:8085/realms/blog-app/protocol/openid-connect/token' \
+        -H 'Content-Type: application/x-www-form-urlencoded' \
+        --data-urlencode 'client_id=blog-app-api' \
+        --data-urlencode 'grant_type=password' \
+        --data-urlencode 'username={{ username }}' \
+        --data-urlencode 'password={{ password }}' \
+        | jq -r '.access_token'
