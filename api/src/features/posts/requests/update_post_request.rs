@@ -6,7 +6,7 @@ use crate::features::posts::models;
 use crate::features::posts::repositories;
 use crate::features::posts::requests::validators::*;
 use crate::features::tags::repositories as t_repositories;
-use crate::shared;
+use crate::features::users::models as u_models;
 use crate::shared::macros::merge;
 use crate::shared::validators::valid_type_of;
 
@@ -36,7 +36,7 @@ impl UpdatePostRequest {
     pub async fn validate_into(
         self,
         id: models::PostId,
-        user_id: shared::models::UserId,
+        user_id: u_models::UserId,
         pool: &sqlx::PgPool,
     ) -> Result<commands::UpdatePostCommand, errors::ValidationError> {
         use garde::Validate as _;

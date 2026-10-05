@@ -1,5 +1,5 @@
 use crate::features::categories::commands;
-use crate::shared::models;
+use crate::features::users::models as u_models;
 
 #[derive(Debug, Clone, Eq, PartialEq, serde::Deserialize, garde::Validate, utoipa::ToSchema)]
 pub struct CreateCategoryRequest {
@@ -11,7 +11,7 @@ pub struct CreateCategoryRequest {
 impl CreateCategoryRequest {
     pub async fn validate_into(
         self,
-        user_id: models::UserId,
+        user_id: u_models::UserId,
         pool: &sqlx::PgPool,
     ) -> Result<commands::CreateCategoryCommand, garde::Report> {
         use garde::Validate as _;

@@ -25,7 +25,7 @@ pub async fn create_tag(
     extract::Json(request): extract::Json<requests::CreateTagRequest>,
 ) -> Result<shared::responses::Created<responses::TagResponse>, errors::ApiError> {
     // TODO get user_id from authentication
-    let user_id = uuid::uuid!("c85df66a-ccd7-4f23-9df6-6accd7ff23db").into();
+    let user_id = uuid::uuid!("01a106a7-4327-7287-9940-af4254498604").into();
     // request validation ( validation errors goto errors::ApiError::Validation(...)
     let commands::CreateTagCommand { user_id, name } = request.validate_into(user_id, &state.pool).await?;
 

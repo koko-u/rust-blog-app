@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "api",
+    "seeds",
 ]
 resolver = "3"
 

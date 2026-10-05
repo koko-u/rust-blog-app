@@ -1,9 +1,10 @@
 use crate::features::posts::models as p_models;
+use crate::features::users::models as u_models;
 use crate::shared;
 
 pub async fn delete_tags_of_post(
     tx: &mut shared::Tx<'_>,
-    user_id: shared::models::UserId,
+    user_id: u_models::UserId,
     post_id: p_models::PostId,
 ) -> Result<u64, sqlx::Error> {
     let result = sqlx::query_file!(

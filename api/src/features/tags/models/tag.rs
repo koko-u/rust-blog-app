@@ -1,7 +1,7 @@
 use better_default::Default as BetterDefault;
 use into_inner::IntoInner;
 
-use crate::shared;
+use crate::features::users::models as u_models;
 
 #[derive(
     Debug,
@@ -27,6 +27,6 @@ pub struct TagId(#[default(uuid::Uuid::now_v7())] uuid::Uuid);
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct TagModel {
     pub id: TagId,
-    pub user_id: shared::models::UserId,
+    pub user_id: u_models::UserId,
     pub name: String,
 }

@@ -53,3 +53,7 @@ ui-fmt:
 # format
 [parallel]
 fmt: api-fmt ui-fmt
+
+# seed sample data
+seeds key:
+    @cargo run --package seeds --bin "{{ key }}"

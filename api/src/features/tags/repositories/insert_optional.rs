@@ -1,9 +1,9 @@
 use crate::features::tags::rows;
+use crate::features::users::models as u_models;
 use crate::shared;
-
 pub async fn insert_optional(
     tx: &mut shared::Tx<'_>,
-    user_id: shared::models::UserId,
+    user_id: u_models::UserId,
     name: &str,
 ) -> Result<Option<rows::TagRow>, sqlx::Error> {
     sqlx::query_file_as!(

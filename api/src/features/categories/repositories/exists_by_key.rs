@@ -1,10 +1,10 @@
 use crate::features::categories::models;
-use crate::shared;
+use crate::features::users::models as u_models;
 
 pub async fn exists_by_key(
     pool: &sqlx::PgPool,
     id: models::CategoryId,
-    user_id: shared::models::UserId,
+    user_id: u_models::UserId,
 ) -> Result<bool, sqlx::Error> {
     let mut conn = pool.acquire().await?;
     sqlx::query_file_scalar!(

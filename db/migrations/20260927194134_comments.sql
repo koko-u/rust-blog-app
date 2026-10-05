@@ -1,11 +1,12 @@
 -- migrate:up
 CREATE TABLE "comments"
 (
-    "id"         uuid        NOT NULL DEFAULT uuidv7(),
-    "post_id"    uuid        NOT NULL,
-    "user_id"    uuid        NOT NULL,
-    "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+    "id"         uuid          NOT NULL DEFAULT uuidv7(),
+    "post_id"    uuid          NOT NULL,
+    "user_id"    uuid          NOT NULL,
+    "content"    varchar(4000) NOT NULL,
+    "created_at" TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    "updated_at" TIMESTAMPTZ   NOT NULL DEFAULT now(),
     CONSTRAINT "comments_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "comment_post_fkey" FOREIGN KEY ("post_id") REFERENCES "posts" ("id") ON DELETE CASCADE
 );

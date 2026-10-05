@@ -23,7 +23,7 @@ pub async fn create_category(
     extract::Json(request): extract::Json<requests::CreateCategoryRequest>,
 ) -> Result<shared::responses::Created<responses::CategoryResponse>, errors::ApiError> {
     // TODO get user_id from authentication
-    let user_id = uuid::uuid!("c85df66a-ccd7-4f23-9df6-6accd7ff23db").into();
+    let user_id = uuid::uuid!("01a106a7-4327-7287-9940-af4254498604").into();
     // request validation ( validation errors goto errors::ApiError::Validation(...)
     let command = request.validate_into(user_id, &state.pool).await?;
 

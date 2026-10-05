@@ -1,7 +1,7 @@
 use crate::errors;
 use crate::features::tags::commands;
 use crate::features::tags::repositories;
-use crate::shared;
+use crate::features::users::models as u_models;
 use crate::shared::macros::merge;
 
 #[derive(Debug, Clone, Eq, PartialEq, serde::Deserialize, garde::Validate, utoipa::ToSchema)]
@@ -14,7 +14,7 @@ pub struct CreateTagRequest {
 impl CreateTagRequest {
     pub async fn validate_into(
         self,
-        user_id: shared::models::UserId,
+        user_id: u_models::UserId,
         pool: &sqlx::PgPool,
     ) -> Result<commands::CreateTagCommand, errors::ValidationError> {
         use garde::Validate as _;

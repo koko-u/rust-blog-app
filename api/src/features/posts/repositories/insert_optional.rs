@@ -1,10 +1,11 @@
 use crate::features::categories::models as c_models;
 use crate::features::posts::rows;
+use crate::features::users::models as u_models;
 use crate::shared;
 
 pub async fn insert_optional(
     tx: &mut shared::Tx<'_>,
-    user_id: shared::models::UserId,
+    user_id: u_models::UserId,
     category_id: c_models::CategoryId,
     title: &str,
     slug: &str,

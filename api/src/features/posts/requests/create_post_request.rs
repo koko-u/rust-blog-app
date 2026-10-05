@@ -4,7 +4,7 @@ use crate::errors;
 use crate::features::posts::commands;
 use crate::features::posts::requests::validators::*;
 use crate::features::tags::repositories as t_repositories;
-use crate::shared;
+use crate::features::users::models as u_models;
 use crate::shared::macros::merge;
 use crate::shared::validators;
 
@@ -29,7 +29,7 @@ pub struct CreatePostRequest {
 impl CreatePostRequest {
     pub async fn validate_into(
         self,
-        user_id: shared::models::UserId,
+        user_id: u_models::UserId,
         pool: &sqlx::PgPool,
     ) -> Result<commands::CreatePostCommand, errors::ValidationError> {
         use garde::Validate as _;

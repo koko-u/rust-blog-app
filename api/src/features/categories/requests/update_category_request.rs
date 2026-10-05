@@ -2,7 +2,7 @@ use crate::errors;
 use crate::features::categories::commands;
 use crate::features::categories::models;
 use crate::features::categories::repositories;
-use crate::shared;
+use crate::features::users::models as u_models;
 use crate::shared::macros::merge;
 
 #[derive(Debug, Clone, Eq, PartialEq, serde::Deserialize, garde::Validate, utoipa::ToSchema)]
@@ -19,7 +19,7 @@ impl UpdateCategoryRequest {
     pub async fn validate_into(
         self,
         id: models::CategoryId,
-        user_id: shared::models::UserId,
+        user_id: u_models::UserId,
         pool: &sqlx::PgPool,
     ) -> Result<commands::UpdateCategoryCommand, errors::ValidationError> {
         use garde::Validate as _;

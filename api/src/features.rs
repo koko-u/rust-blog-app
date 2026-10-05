@@ -4,3 +4,4 @@ pub mod health_check;
 pub mod post_tags;
 pub mod posts;
 pub mod tags;
+pub mod users;
