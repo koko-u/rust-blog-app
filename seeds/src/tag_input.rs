@@ -1,26 +1,19 @@
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct CategoryInput {
+pub struct TagInput {
     pub name: String,
-    pub slug: String,
     pub user_id: uuid::Uuid,
 }
-impl CategoryInput {
+
+impl TagInput {
     pub fn new(name: &str, user_id: uuid::Uuid) -> Self {
         Self {
             name: name.to_string(),
-            slug: rslug::slugify!(name),
             user_id,
         }
     }
-
     pub fn to_name(&self) -> String {
         self.name.clone()
     }
-
-    pub fn to_slug(&self) -> String {
-        self.slug.clone()
-    }
-
     pub fn to_user_id(&self) -> uuid::Uuid {
         self.user_id
     }

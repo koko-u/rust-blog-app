@@ -10,15 +10,16 @@ async fn main() -> eyre::Result<()> {
         let mut tx = pool.begin().await?;
 
         // create categories
+        let user_ids = data::CATEGORIES.iter().map(|it| it.to_user_id()).collect_vec();
         let names = data::CATEGORIES.iter().map(|it| it.to_name()).collect_vec();
         let slugs = data::CATEGORIES.iter().map(|it| it.to_slug()).collect_vec();
         sqlx::query!(
             r#"INSERT INTO "categories" ("user_id", "name", "slug")
-               SELECT $1::uuid, "name", "slug"
+               SELECT "user_id", "name", "slug"
                FROM
-                   unnest($2::varchar[], $3::varchar[]) AS "A"("name", "slug")
+                   unnest($1::uuid[], $2::varchar[], $3::varchar[]) AS "A"("user_id", "name", "slug")
                ON CONFLICT ("slug") DO NOTHING"#,
-            data::USER_ID,
+            &user_ids,
             &names,
             &slugs
         )
@@ -26,14 +27,15 @@ async fn main() -> eyre::Result<()> {
         .await?;
 
         // create tags
-        let names = data::TAGS.iter().cloned().collect_vec();
+        let user_ids = data::TAGS.iter().map(|it| it.to_user_id()).collect_vec();
+        let names = data::TAGS.iter().map(|it| it.to_name()).collect_vec();
         sqlx::query!(
             r#"INSERT INTO "tags" ("user_id", "name")
-               SELECT $1::uuid, "name"
+               SELECT "user_id", "name"
                FROM
-                   unnest($2::varchar[]) AS a("name")
+                   unnest($1::uuid[], $2::varchar[]) AS a("user_id","name")
                ON CONFLICT ("user_id","name") DO NOTHING"#,
-            data::USER_ID,
+            &user_ids,
             &names
         )
         .execute(tx.as_mut())

@@ -23,9 +23,10 @@ async fn main() -> eyre::Result<()> {
                 FROM
                     "categories" AS "C"
                 WHERE "name" = $2::varchar
+                  AND "user_id" = $1::uuid
                 ON CONFLICT ("slug") DO NOTHING
                 RETURNING "P"."id""#,
-                data::USER_ID,
+                post.user_id,
                 post.category_name,
                 post.title,
                 post.slug,
@@ -51,8 +52,10 @@ async fn main() -> eyre::Result<()> {
                                  INNER JOIN
                              unnest($3::varchar[]) AS "P"("name")
                              ON
-                                 "T"."name" = "P"."name""#,
-                    data::USER_ID,
+                                 "T"."name" = "P"."name"
+                                 AND
+                                 "T"."user_id" = $1::uuid"#,
+                    post.user_id,
                     post_id,
                     &names
                 )
