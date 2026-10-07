@@ -1,6 +1,9 @@
 use axum::extract;
 
 use crate::errors;
+use crate::features::comments::commands;
+use crate::features::comments::models;
+use crate::features::comments::repositories;
 use crate::features::comments::requests;
 use crate::features::comments::responses;
 use crate::features::posts::models as p_models;
@@ -28,5 +31,23 @@ pub async fn create_comment_of_post(
     extract::State(state): extract::State<state::AppState>,
     extract::Json(request): extract::Json<requests::CreateCommentRequest>,
 ) -> Result<shared::responses::Created<responses::CommentResponse>, errors::ApiError> {
-    todo!()
+    let commands::CreateCommentCommand {
+        post_id,
+        user_id,
+        content,
+    } = request
+        .validate_into(post_id, current_user.id, &state.pool)
+        .await?;
+    let inserted = shared::transaction::<models::CommentModel, sqlx::Error, _>(&state.pool, async |tx| {
+        let inserted_row = repositories::insert_one(tx, post_id, user_id, &content).await?;
+        let inserted_model = models::CommentModel::from(inserted_row);
+        Ok(inserted_model)
+    })
+    .await?;
+
+    let location = format!(
+        "/api/posts/{post_id}/comments/{comment_id}",
+        comment_id = inserted.id
+    );
+    Ok(shared::responses::created(location, inserted.into()))
 }
